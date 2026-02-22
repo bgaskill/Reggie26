@@ -117,4 +117,11 @@ public final class Constants {
 
     }
 
+public static final class IntakeConstants {
+      public static final int kIntakeCanId = 40;
+      public static final int kIntakeArmCanId = 41;
+
+
+    }
+
 }
