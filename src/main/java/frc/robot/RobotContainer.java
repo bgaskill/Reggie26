@@ -15,10 +15,15 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
+import edu.wpi.first.wpilibj.Joystick;
+
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.FeederSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -35,10 +40,11 @@ import java.util.List;
 public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-
+  private final FeederSubsystem m_feeder = new FeederSubsystem();
+   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
   // The driver's controller
-  XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
-
+  XboxController m_operatorController = new XboxController(OIConstants.kOperatorControllerPort);
+  Joystick m_driverController = new Joystick(OIConstants.kDriverControllerPort);
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -52,12 +58,25 @@ public class RobotContainer {
         // Turning is controlled by the X axis of the right stick.
         new RunCommand(
             () -> m_robotDrive.drive(
-                -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(m_driverController.getY(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(m_driverController.getX(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(m_driverController.getTwist(), OIConstants.kDriveDeadband),
                 true),
             m_robotDrive));
-  }
+ 
+    m_feeder.setDefaultCommand(
+        new RunCommand(
+        () -> m_feeder.launch(0),
+        m_feeder)
+         ); 
+    
+    m_shooter.setDefaultCommand(
+        new RunCommand(
+        () -> m_shooter.shooterStop(0),
+        m_feeder)
+         );      
+    
+         }
 
   /**
    * Use this method to define your button->command mappings. Buttons can be
@@ -74,11 +93,22 @@ public class RobotContainer {
             () -> m_robotDrive.setX(),
             m_robotDrive));
 
-    new JoystickButton(m_driverController, XboxController.Button.kStart.value)
+    new JoystickButton(m_driverController, 7)
         .onTrue(new InstantCommand(
             () -> m_robotDrive.zeroHeading(),
             m_robotDrive));
-  }
+  
+    new JoystickButton(m_driverController, 1)
+        .whileTrue(new RunCommand(
+            () -> m_feeder.launch(.5),
+            m_feeder));
+
+    new JoystickButton(m_operatorController, 2)
+        .whileTrue(new RunCommand(
+            () -> m_shooter.shoot(.5),
+            m_shooter));
+
+    }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
