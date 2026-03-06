@@ -20,8 +20,10 @@ import edu.wpi.first.wpilibj.Joystick;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -38,10 +40,13 @@ import java.util.List;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+    
   // The robot's subsystems
+  private final ArmSubsystem m_arm = new ArmSubsystem();
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final FeederSubsystem m_feeder = new FeederSubsystem();
-   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
+    private final ShooterSubsystem m_shooter = new ShooterSubsystem();
+    private final IntakeSubsystem m_intake = new IntakeSubsystem();
   // The driver's controller
   XboxController m_operatorController = new XboxController(OIConstants.kOperatorControllerPort);
   Joystick m_driverController = new Joystick(OIConstants.kDriverControllerPort);
@@ -63,18 +68,18 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(m_driverController.getTwist(), OIConstants.kDriveDeadband),
                 true),
             m_robotDrive));
- 
-    m_feeder.setDefaultCommand(
-        new RunCommand(
-        () -> m_feeder.launch(0),
-        m_feeder)
-         ); 
     
-    m_shooter.setDefaultCommand(
+    m_arm.setDefaultCommand(
         new RunCommand(
-        () -> m_shooter.shooterStop(0),
-        m_feeder)
-         );      
+        () -> m_arm.move(m_operatorController.getRawAxis(5)*-.3), m_arm)
+        );
+    
+    
+    //m_shooter.setDefaultCommand(
+      //  new RunCommand(
+       // () -> m_shooter.shooterStop(0),
+       // m_feeder)
+        // );      
     
          }
 
@@ -97,18 +102,53 @@ public class RobotContainer {
         .onTrue(new InstantCommand(
             () -> m_robotDrive.zeroHeading(),
             m_robotDrive));
-  
+
     new JoystickButton(m_driverController, 1)
         .whileTrue(new RunCommand(
-            () -> m_feeder.launch(.5),
+            () -> m_feeder.launch(1),
             m_feeder));
+
+    new JoystickButton(m_operatorController, 1)
+        .whileTrue(new RunCommand(
+            () -> m_shooter.shoot(.3),
+            m_shooter));
 
     new JoystickButton(m_operatorController, 2)
         .whileTrue(new RunCommand(
-            () -> m_shooter.shoot(.5),
+            () -> m_shooter.shoot(.45),
             m_shooter));
 
+    new JoystickButton(m_operatorController, 4)
+        .whileTrue(new RunCommand(
+            () -> m_shooter.shoot(.55),
+            m_shooter));
+
+    new JoystickButton(m_operatorController, 3)
+        .whileTrue(new RunCommand(
+            () -> m_shooter.shoot(.8),
+            m_shooter));
+
+    new JoystickButton(m_operatorController, 5)
+        .whileTrue(new RunCommand(
+            () -> m_intake.intake(.4,false),
+            m_intake));
+
+    new JoystickButton(m_operatorController, 6)
+        .whileTrue(new RunCommand(
+            () -> m_intake.intake(0.4, true),
+            m_intake));
+
+    new JoystickButton(m_operatorController, 8)
+        .whileTrue(new RunCommand(
+            () -> m_shooter.shoot(0),
+            m_shooter));
+
+    new JoystickButton(m_operatorController, 10)
+        .whileTrue(new RunCommand(
+            () -> m_arm.manual(),
+            m_arm));
     }
+    
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

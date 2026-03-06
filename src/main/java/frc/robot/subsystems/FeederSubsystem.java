@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FeederConstants;
 import com.revrobotics.spark.SparkFlex;
@@ -15,14 +16,18 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 public class FeederSubsystem extends SubsystemBase {
   SparkFlex launcher = new SparkFlex(FeederConstants.kLauncherCanId, MotorType.kBrushless);
   SparkFlex conveyor = new SparkFlex(FeederConstants.kConveyorCanId, MotorType.kBrushless);
-
   public void launch(double speed) {
-
     launcher.set(speed);
     conveyor.set(speed);
+    Timer.delay(.3);
+    launcher.set(0);
+    conveyor.set(0);
+    Timer.delay(.3);
+    }
 
 
-  }
+  
+  
 
 
   /** Creates a new Feeder. */
