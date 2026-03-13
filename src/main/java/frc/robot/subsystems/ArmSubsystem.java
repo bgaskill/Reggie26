@@ -10,7 +10,6 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkBase.ControlType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -42,13 +41,16 @@ public class ArmSubsystem extends SubsystemBase {
       SmartDashboard.putBoolean("Manual mode", manual);
     }
   }
+  public void zero(){
+    arm.getEncoder().setPosition(0);
+  }
   public void move(double direction){
    //f(!configured){
      //configureShtuff();
     //}
     if(!manual){
       if(direction<0){
-        m_armController.setSetpoint(-80, SparkMax.ControlType.kPosition);
+        m_armController.setSetpoint(-78.693222, SparkMax.ControlType.kPosition);
         
       }else if(direction>0){
         m_armController.setSetpoint(0, SparkMax.ControlType.kPosition);

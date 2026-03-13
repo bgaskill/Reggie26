@@ -26,6 +26,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private long lastClickTime = 0;
   private static final long DEBOUNCE_INTERVAL = 200;
   private double current_speed = .2;
+  private boolean autoShooting = false;
 
   public void init(){
 shooterFollowConfig.follow(40,true);
@@ -35,12 +36,11 @@ shooterFollow.configure(shooterFollowConfig,ResetMode.kResetSafeParameters, Pers
   }
 
 
-  public void shoot(double speed) {
- 
+  public void shoot(double speed, int mode) {
 
     long currentTime = System.currentTimeMillis();
 
-    
+    if(mode == 0){
       if (currentTime - lastClickTime > DEBOUNCE_INTERVAL) {
         lastClickTime = currentTime;
         if(shooting && speed == current_speed){
@@ -56,15 +56,19 @@ shooterFollow.configure(shooterFollowConfig,ResetMode.kResetSafeParameters, Pers
         
       }  
     
-    
+    }else if(mode == 1 && autoShooting != true){
+      current_speed = speed;
+      shooterLead.set(speed);
+      autoShooting = true;
+    }else if(mode == 2 && autoShooting != false){
+      current_speed = 0;
+      shooterLead.set(0);
+      autoShooting = false;
+    }
     
 }
-
-public void shooterStop(double speed) {
-
-    shooterLead.set(0);
     
-}
+
 
   public ShooterSubsystem() {}
 

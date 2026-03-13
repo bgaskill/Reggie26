@@ -14,6 +14,8 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj.Joystick;
 
@@ -21,6 +23,7 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -33,6 +36,9 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+//import com.pathplanner.lib.auto.;;
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -43,20 +49,53 @@ public class RobotContainer {
     
   // The robot's subsystems
   private final ArmSubsystem m_arm = new ArmSubsystem();
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final FeederSubsystem m_feeder = new FeederSubsystem();
-    private final ShooterSubsystem m_shooter = new ShooterSubsystem();
-    private final IntakeSubsystem m_intake = new IntakeSubsystem();
+  private final ShooterSubsystem m_shooter = new ShooterSubsystem();
+  private final IntakeSubsystem m_intake = new IntakeSubsystem();
+  private final ClimbSubsystem m_climber = new ClimbSubsystem();
+  private final SendableChooser<Command> autoChooser;
   // The driver's controller
   XboxController m_operatorController = new XboxController(OIConstants.kOperatorControllerPort);
   Joystick m_driverController = new Joystick(OIConstants.kDriverControllerPort);
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
+  
   public RobotContainer() {
+    //NamedCommands.registerCommand("autoTest", new RunCommand(() -> System.out.println("AutoPrint")));
+     // Build an auto chooser. This will use Commands.none() as the default option.
+   NamedCommands.registerCommand("Shoot Close", new RunCommand(()
+   -> m_shooter.shoot(.46 , 1), m_shooter).withTimeout(3).withName("Shoot Close"));
+      NamedCommands.registerCommand("Start intake", new RunCommand(()
+   -> m_intake.intake(.4,false, 1), m_intake).withTimeout(3).withName("Start intake"));
+   NamedCommands.registerCommand("Stop intake", new RunCommand(()
+   -> m_intake.intake(.4,false, 2), m_intake).withTimeout(3).withName("Stop intake"));
+    NamedCommands.registerCommand("Lower arm", new RunCommand(()
+   -> m_arm.move(-1), m_arm).withTimeout(3).withName("Lower arm"));
+   NamedCommands.registerCommand("Raise arm", new RunCommand(()
+   -> m_arm.move(1), m_arm).withTimeout(3).withName("Raise arm"));
+    NamedCommands.registerCommand("Shoot mid", new RunCommand(()
+   -> m_shooter.shoot(1, 1), m_shooter).withTimeout(3).withName("Shoot mid"));
+   NamedCommands.registerCommand("Shoot Trench", new RunCommand(()
+   -> m_shooter.shoot(.53, 1), m_shooter).withTimeout(3).withName("Shoot Trench"));
+    NamedCommands.registerCommand("Feed", new RunCommand(()
+   -> m_feeder.feed(1), m_feeder).withTimeout(.02).withName("Stop Feed"));
+   NamedCommands.registerCommand("Stop Shoot", new RunCommand(()
+   -> m_shooter.shoot(0, 2), m_shooter).withTimeout(.02).withName("Stop Shoot"));
+   NamedCommands.registerCommand("Arm Dxown", new RunCommand(()
+   -> m_shooter.shoot(0, 2), m_shooter).withTimeout(.02).withName("Stop Shoot"));
+
+    // Another option that allows you to specify the default auto by its name
+    // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
+
+    
     // Configure the button bindings
     configureButtonBindings();
-
+    autoChooser = AutoBuilder.buildAutoChooser("Arm down intake");
+    SmartDashboard.putData("Auto Chooser", autoChooser);
+    
+    
     // Configure default commands
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
@@ -72,6 +111,10 @@ public class RobotContainer {
     m_arm.setDefaultCommand(
         new RunCommand(
         () -> m_arm.move(m_operatorController.getRawAxis(5)*-.3), m_arm)
+        );
+    m_climber.setDefaultCommand(
+        new RunCommand(
+        () -> m_climber.climb(m_operatorController.getRawAxis(1)*1), m_climber)
         );
     
     
@@ -105,47 +148,51 @@ public class RobotContainer {
 
     new JoystickButton(m_driverController, 1)
         .whileTrue(new RunCommand(
-            () -> m_feeder.launch(1),
+            () -> m_feeder.feed(1),
             m_feeder));
 
     new JoystickButton(m_operatorController, 1)
         .whileTrue(new RunCommand(
-            () -> m_shooter.shoot(.3),
+            () -> m_shooter.shoot(.45, 0),
             m_shooter));
 
     new JoystickButton(m_operatorController, 2)
         .whileTrue(new RunCommand(
-            () -> m_shooter.shoot(.45),
+            () -> m_shooter.shoot(.53, 0),
             m_shooter));
 
     new JoystickButton(m_operatorController, 4)
         .whileTrue(new RunCommand(
-            () -> m_shooter.shoot(.55),
+            () -> m_shooter.shoot(.55, 0),
             m_shooter));
 
     new JoystickButton(m_operatorController, 3)
         .whileTrue(new RunCommand(
-            () -> m_shooter.shoot(.8),
+            () -> m_shooter.shoot(.8, 0),
             m_shooter));
 
     new JoystickButton(m_operatorController, 5)
         .whileTrue(new RunCommand(
-            () -> m_intake.intake(.4,false),
+            () -> m_intake.intake(.4,false, 0),
             m_intake));
 
     new JoystickButton(m_operatorController, 6)
         .whileTrue(new RunCommand(
-            () -> m_intake.intake(0.4, true),
+            () -> m_intake.intake(0.4, true, 0),
             m_intake));
 
     new JoystickButton(m_operatorController, 8)
         .whileTrue(new RunCommand(
-            () -> m_shooter.shoot(0),
+            () -> m_shooter.shoot(0, 0),
             m_shooter));
 
-    new JoystickButton(m_operatorController, 10)
+    new JoystickButton(m_operatorController, 9)
         .whileTrue(new RunCommand(
             () -> m_arm.manual(),
+            m_arm));
+    new JoystickButton(m_operatorController, 10)
+        .whileTrue(new RunCommand(
+            () -> m_arm.zero(),
             m_arm));
     }
     
@@ -156,43 +203,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // Create config for trajectory
-    TrajectoryConfig config = new TrajectoryConfig(
-        AutoConstants.kMaxSpeedMetersPerSecond,
-        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-        // Add kinematics to ensure max speed is actually obeyed
-        .setKinematics(DriveConstants.kDriveKinematics);
-
-    // An example trajectory to follow. All units in meters.
-    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-        // Start at the origin facing the +X direction
-        new Pose2d(0, 0, new Rotation2d(0)),
-        // Pass through these two interior waypoints, making an 's' curve path
-        List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-        // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(3, 0, new Rotation2d(0)),
-        config);
-
-    var thetaController = new ProfiledPIDController(
-        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
-    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-        exampleTrajectory,
-        m_robotDrive::getPose, // Functional interface to feed supplier
-        DriveConstants.kDriveKinematics,
-
-        // Position controllers
-        new PIDController(AutoConstants.kPXController, 0, 0),
-        new PIDController(AutoConstants.kPYController, 0, 0),
-        thetaController,
-        m_robotDrive::setModuleStates,
-        m_robotDrive);
-
-    // Reset odometry to the starting pose of the trajectory.
-    m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
-
-    // Run path following command, then stop at the end.
-    return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
+    //System.out.println("Auto");
+    return autoChooser.getSelected();
   }
 }

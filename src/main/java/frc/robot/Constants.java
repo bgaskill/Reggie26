@@ -25,10 +25,10 @@ public final class Constants {
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedMetersPerSecond = 1;//5.74
+    public static final double kMaxSpeedMetersPerSecond = 5.74;//5.74
 //max speed 5.74
     
-    public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
+    public static final double kMaxAngularSpeed = 1.5 * Math.PI; // radians per second  2 original
 
     // Chassis configuration
     public static final double kTrackWidth = Units.inchesToMeters(20.5);
@@ -85,7 +85,7 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 3;
+    public static final double kMaxSpeedMetersPerSecond = 5;
     public static final double kMaxAccelerationMetersPerSecondSquared = 3;
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
@@ -121,6 +121,9 @@ public static final class IntakeConstants {
       public static final int kIntakeCanId = 20;
       public static final int kArmCanId = 21;
 
+    }
+public static final class ClimbConstants {
+      public static final int kClimbCanId = 32;
     }
 
 }
