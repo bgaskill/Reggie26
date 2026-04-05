@@ -210,8 +210,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 
 
-
-  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
+ public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
     // Convert the commanded speeds into the correct units for the drivetrain
     double xSpeedDelivered = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;

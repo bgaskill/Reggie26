@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.9,
-        "y": 4.011
+        "x": 0.6116100178890873,
+        "y": 6.412021466905187
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8347711267605638,
-        "y": 7.659806338028169
+        "x": 2.1692486583184256,
+        "y": 5.162665474060821
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "2nd Depot take"
     },
     {
       "anchor": {
-        "x": 0.3656866197183106,
-        "y": 5.871355633802818
+        "x": 3.24,
+        "y": 4.011
       },
       "prevControl": {
-        "x": 0.3656866197183108,
-        "y": 2.8214084507042254
+        "x": 2.775134168157424,
+        "y": 5.292468694096601
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "End of B"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": "middle",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -179.03047166344388
   },
   "useDefaultConstraints": true
 }

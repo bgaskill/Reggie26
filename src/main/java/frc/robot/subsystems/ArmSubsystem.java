@@ -50,7 +50,7 @@ public class ArmSubsystem extends SubsystemBase {
     //}
     if(!manual){
       if(direction<0){
-        m_armController.setSetpoint(-78.693222, SparkMax.ControlType.kPosition);
+        m_armController.setSetpoint(-84, SparkMax.ControlType.kPosition);
         
       }else if(direction>0){
         m_armController.setSetpoint(0, SparkMax.ControlType.kPosition);

@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.9,
-        "y": 4.011
+        "x": 0.7414132379248655,
+        "y": 5.86035778175313
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8347711267605638,
-        "y": 7.659806338028169
+        "x": 1.6338103756708402,
+        "y": 5.6981037567084085
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "In Depot"
     },
     {
       "anchor": {
-        "x": 0.3656866197183106,
-        "y": 5.871355633802818
+        "x": 0.6116100178890873,
+        "y": 6.412021466905187
       },
       "prevControl": {
-        "x": 0.3656866197183108,
-        "y": 2.8214084507042254
+        "x": 1.357978533094812,
+        "y": 6.476923076923075
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "2nd Depot take"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": -179.03047166344388
   },
   "reversed": false,
   "folder": "middle",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

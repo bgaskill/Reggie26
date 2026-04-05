@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import com.revrobotics.spark.SparkFlex;
@@ -17,6 +18,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private long lastClickTimeIntake = 0;
   private static final long DEBOUNCE_INTERVAL = 200;
   private boolean autoIntake = false;
+  
   //m_encoder = arm.getEncoder();
   
   public void intake(double speed, boolean outtake, int mode) {
@@ -42,10 +44,13 @@ public class IntakeSubsystem extends SubsystemBase {
     }else if(mode == 1 && !autoIntake){
         intake.set(speed);
         autoIntake = true;
+        intaking = true;
     }else if(mode == 2 && autoIntake){
         autoIntake = false;
         intake.set(0);
+        intaking = false;
     }
+    SmartDashboard.putBoolean("Intake On", intaking);
   }
 
   

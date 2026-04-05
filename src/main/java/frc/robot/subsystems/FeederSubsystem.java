@@ -19,10 +19,11 @@ public class FeederSubsystem extends SubsystemBase {
   public void feed(double speed) {
     launcher.set(speed);
     conveyor.set(speed);
-    Timer.delay(.3);
+    Timer.delay(.5);
     launcher.set(0);
     conveyor.set(0);
-    Timer.delay(.3);
+    Timer.delay(.2);
+
   }
 
 

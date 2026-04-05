@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.9156171735241503,
-        "y": 4.011
+        "x": 3.223899821109123,
+        "y": 3.994436493738819
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.05,
+        "x": 3.24,
         "y": 4.011
       },
       "prevControl": {
-        "x": 2.3,
-        "y": 4.011
+        "x": 2.9900002407014905,
+        "y": 4.010653084034453
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "End of B"
     }
   ],
   "rotationTargets": [],
@@ -45,7 +45,7 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "middle",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

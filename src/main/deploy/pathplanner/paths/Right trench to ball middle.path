@@ -35,7 +35,7 @@
       "minWaypointRelativePos": 0.4145199063231847,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
-        "maxVelocity": 1.0,
+        "maxVelocity": 0.7,
         "maxAcceleration": 2.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
@@ -48,7 +48,7 @@
   "eventMarkers": [
     {
       "name": "Start intake",
-      "waypointRelativePos": 0.15690866510538626,
+      "waypointRelativePos": 0.0,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -59,7 +59,7 @@
     },
     {
       "name": "Lower arm",
-      "waypointRelativePos": 0.20140515222482447,
+      "waypointRelativePos": 0.08430913348946123,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -82,7 +82,7 @@
     "rotation": 90.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "right",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 79.62545344185554

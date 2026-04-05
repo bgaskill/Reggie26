@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.Joystick;
 
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClimbSubsystem;
@@ -32,8 +33,11 @@ import frc.robot.subsystems.ShooterSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
+
 import java.util.List;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -46,6 +50,7 @@ import com.pathplanner.lib.auto.NamedCommands;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+
     
   // The robot's subsystems
   private final ArmSubsystem m_arm = new ArmSubsystem();
@@ -53,46 +58,49 @@ public class RobotContainer {
   private final FeederSubsystem m_feeder = new FeederSubsystem();
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
-  private final ClimbSubsystem m_climber = new ClimbSubsystem();
+  public final static ClimbSubsystem m_climber = new ClimbSubsystem();
   private final SendableChooser<Command> autoChooser;
   // The driver's controller
   XboxController m_operatorController = new XboxController(OIConstants.kOperatorControllerPort);
   Joystick m_driverController = new Joystick(OIConstants.kDriverControllerPort);
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
-  
+public void limeLightAdjustAngle(){
+   double tx = LimelightHelpers.getTX("limelight"); 
+   SmartDashboard.putNumber("Limelight angle", tx);
+
+}
   public RobotContainer() {
     //NamedCommands.registerCommand("autoTest", new RunCommand(() -> System.out.println("AutoPrint")));
      // Build an auto chooser. This will use Commands.none() as the default option.
+     NamedCommands.registerCommand("Shoot Mid", new RunCommand(()
+   -> m_shooter.shoot(4096 , 1, "blue" ), m_shooter).withTimeout(5).withName("Shoot Mid"));
    NamedCommands.registerCommand("Shoot Close", new RunCommand(()
-   -> m_shooter.shoot(.46 , 1), m_shooter).withTimeout(3).withName("Shoot Close"));
+   -> m_shooter.shoot(2700 , 1, "green"), m_shooter).withTimeout(.5).withName("Shoot Close"));
       NamedCommands.registerCommand("Start intake", new RunCommand(()
-   -> m_intake.intake(.4,false, 1), m_intake).withTimeout(3).withName("Start intake"));
+   -> m_intake.intake(IntakeConstants.intakeSpeed,false, 1), m_intake).withTimeout(.5).withName("Start intake"));
    NamedCommands.registerCommand("Stop intake", new RunCommand(()
-   -> m_intake.intake(.4,false, 2), m_intake).withTimeout(3).withName("Stop intake"));
+   -> m_intake.intake(IntakeConstants.intakeSpeed,false, 2), m_intake).withTimeout(.5).withName("Stop intake"));
     NamedCommands.registerCommand("Lower arm", new RunCommand(()
    -> m_arm.move(-1), m_arm).withTimeout(3).withName("Lower arm"));
    NamedCommands.registerCommand("Raise arm", new RunCommand(()
    -> m_arm.move(1), m_arm).withTimeout(3).withName("Raise arm"));
-    NamedCommands.registerCommand("Shoot mid", new RunCommand(()
-   -> m_shooter.shoot(1, 1), m_shooter).withTimeout(3).withName("Shoot mid"));
    NamedCommands.registerCommand("Shoot Trench", new RunCommand(()
-   -> m_shooter.shoot(.53, 1), m_shooter).withTimeout(3).withName("Shoot Trench"));
+   -> m_shooter.shoot(3300, 1, "red"), m_shooter).withTimeout(1).withName("Shoot Trench"));
     NamedCommands.registerCommand("Feed", new RunCommand(()
-   -> m_feeder.feed(1), m_feeder).withTimeout(.02).withName("Stop Feed"));
+   -> m_feeder.feed(1), m_feeder).withTimeout(.02).withName("Feed"));
+   NamedCommands.registerCommand("Feed Stop", new RunCommand(()
+   -> m_feeder.feed(0), m_feeder).withTimeout(.02).withName("Feed Stop"));
    NamedCommands.registerCommand("Stop Shoot", new RunCommand(()
-   -> m_shooter.shoot(0, 2), m_shooter).withTimeout(.02).withName("Stop Shoot"));
-   NamedCommands.registerCommand("Arm Dxown", new RunCommand(()
-   -> m_shooter.shoot(0, 2), m_shooter).withTimeout(.02).withName("Stop Shoot"));
-
+   -> m_shooter.shoot(0, 2, "off"), m_shooter).withTimeout(.02).withName("Stop Shoot"));
+    NamedCommands.registerCommand("Climb up", new RunCommand(()
+    -> m_climber.climbUp(), m_climber).withTimeout(.02).withName(("Climb up")));
     // Another option that allows you to specify the default auto by its name
     // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
 
     
     // Configure the button bindings
+
     configureButtonBindings();
-    autoChooser = AutoBuilder.buildAutoChooser("Arm down intake");
+    autoChooser = AutoBuilder.buildAutoChooser("Left trench go collect mid shoot side");
     SmartDashboard.putData("Auto Chooser", autoChooser);
     
     
@@ -110,11 +118,15 @@ public class RobotContainer {
     
     m_arm.setDefaultCommand(
         new RunCommand(
-        () -> m_arm.move(m_operatorController.getRawAxis(5)*-.3), m_arm)
+        () -> m_arm.move(m_operatorController.getRawAxis(5)*-.6), m_arm)
         );
     m_climber.setDefaultCommand(
         new RunCommand(
         () -> m_climber.climb(m_operatorController.getRawAxis(1)*1), m_climber)
+        );
+    m_shooter.setDefaultCommand(
+        new RunCommand(
+        () -> m_shooter.shootConstant(), m_shooter)
         );
     
     
@@ -146,44 +158,40 @@ public class RobotContainer {
             () -> m_robotDrive.zeroHeading(),
             m_robotDrive));
 
-    new JoystickButton(m_driverController, 1)
-        .whileTrue(new RunCommand(
-            () -> m_feeder.feed(1),
-            m_feeder));
-
     new JoystickButton(m_operatorController, 1)
         .whileTrue(new RunCommand(
-            () -> m_shooter.shoot(.45, 0),
+            () -> m_shooter.shoot(2550, 0, "green"),
             m_shooter));
 
     new JoystickButton(m_operatorController, 2)
         .whileTrue(new RunCommand(
-            () -> m_shooter.shoot(.53, 0),
+            () -> m_shooter.shoot(3300, 0, "red"),
             m_shooter));
 
     new JoystickButton(m_operatorController, 4)
         .whileTrue(new RunCommand(
-            () -> m_shooter.shoot(.55, 0),
+            () -> m_shooter.shoot(4050, 0, "yellow"),
             m_shooter));
 
     new JoystickButton(m_operatorController, 3)
         .whileTrue(new RunCommand(
-            () -> m_shooter.shoot(.8, 0),
+            () -> m_shooter.shoot(3130, 0, "blue"),
             m_shooter));
 
     new JoystickButton(m_operatorController, 5)
         .whileTrue(new RunCommand(
-            () -> m_intake.intake(.4,false, 0),
+            () -> m_intake.intake(IntakeConstants.intakeSpeed,false, 0),
             m_intake));
 
     new JoystickButton(m_operatorController, 6)
         .whileTrue(new RunCommand(
-            () -> m_intake.intake(0.4, true, 0),
+            () -> m_intake.intake(IntakeConstants.intakeSpeed
+            , true, 0),
             m_intake));
 
     new JoystickButton(m_operatorController, 8)
         .whileTrue(new RunCommand(
-            () -> m_shooter.shoot(0, 0),
+            () -> m_shooter.shoot(0, 0, "off"),
             m_shooter));
 
     new JoystickButton(m_operatorController, 9)
@@ -194,6 +202,14 @@ public class RobotContainer {
         .whileTrue(new RunCommand(
             () -> m_arm.zero(),
             m_arm));
+    new JoystickButton(m_driverController, 1)
+        .whileTrue(new RunCommand(
+            () -> m_feeder.feed(1),
+            m_feeder));
+    new JoystickButton(m_driverController,2)
+        .whileTrue(new RunCommand(
+            () -> limeLightAdjustAngle(),
+            m_robotDrive));
     }
     
 
